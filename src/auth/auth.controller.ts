@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Post,
   Req,
   Res,
@@ -18,10 +20,9 @@ import { CookieOptions } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async register(
-    @Body() dto: RegisterDtoTs,
-  ): Promise<ISuccessResponse | IErrorResponse> {
+  async register(@Body() dto: RegisterDtoTs): Promise<ISuccessResponse> {
     const data = await this.authService.register(dto);
     return {
       success: true,
@@ -31,6 +32,7 @@ export class AuthController {
     };
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
     @Res({ passthrough: true })
@@ -38,7 +40,7 @@ export class AuthController {
       cookie: (key: string, value: string, options?: CookieOptions) => void;
     },
     @Body() dto: LoginDtoTs,
-  ): Promise<ISuccessResponse | IErrorResponse> {
+  ): Promise<ISuccessResponse> {
     const data = await this.authService.login(dto);
 
     res.cookie('accessToken', data.accessToken, {
@@ -52,22 +54,23 @@ export class AuthController {
       success: true,
       message: 'User logged in successfully',
       data,
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
     };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('verifyToken')
+  @HttpCode(HttpStatus.OK)
   async verifyToken(
     @Req() req: Request & { user: { userId: string } },
-  ): Promise<ISuccessResponse | IErrorResponse> {
+  ): Promise<ISuccessResponse> {
     const userId = req.user.userId;
     const data = await this.authService.getProfile(userId);
     return {
       success: true,
       message: 'Token verified successfully',
       data,
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
     };
   }
 }
