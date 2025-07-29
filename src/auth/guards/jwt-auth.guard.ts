@@ -9,11 +9,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     if (info?.name === 'TokenExpiredError') {
-      throw new UnauthorizedException('Your session has expired.');
+      throw new UnauthorizedException('Token expired.');
     }
 
     if (info?.name === 'JsonWebTokenError') {
       throw new UnauthorizedException('Invalid token.');
+    }
+
+    if (
+      info?.message === 'No auth token' ||
+      info?.message?.includes('No auth')
+    ) {
+      throw new UnauthorizedException('Token not found.');
     }
 
     if (!user) {

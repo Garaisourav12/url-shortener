@@ -11,7 +11,6 @@ import { AuthService } from './auth.service';
 import { RegisterDtoTs } from './dto/register.dto.ts';
 import { LoginDtoTs } from './dto/login.dto.ts';
 import { IErrorResponse, ISuccessResponse } from 'src/common/types';
-import { handleErrorResponse } from 'src/utils/util';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CookieOptions } from 'express';
 
@@ -23,17 +22,13 @@ export class AuthController {
   async register(
     @Body() dto: RegisterDtoTs,
   ): Promise<ISuccessResponse | IErrorResponse> {
-    try {
-      const data = await this.authService.register(dto);
-      return {
-        success: true,
-        message: 'User registered successfully',
-        data,
-        statusCode: 201,
-      };
-    } catch (error) {
-      return handleErrorResponse(error);
-    }
+    const data = await this.authService.register(dto);
+    return {
+      success: true,
+      message: 'User registered successfully',
+      data,
+      statusCode: 201,
+    };
   }
 
   @Post('login')
@@ -44,25 +39,21 @@ export class AuthController {
     },
     @Body() dto: LoginDtoTs,
   ): Promise<ISuccessResponse | IErrorResponse> {
-    try {
-      const data = await this.authService.login(dto);
+    const data = await this.authService.login(dto);
 
-      res.cookie('accessToken', data.accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24,
-      });
+    res.cookie('accessToken', data.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24,
+    });
 
-      return {
-        success: true,
-        message: 'User logged in successfully',
-        data,
-        statusCode: 200,
-      };
-    } catch (error) {
-      return handleErrorResponse(error);
-    }
+    return {
+      success: true,
+      message: 'User logged in successfully',
+      data,
+      statusCode: 200,
+    };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -70,17 +61,13 @@ export class AuthController {
   async verifyToken(
     @Req() req: Request & { user: { userId: string } },
   ): Promise<ISuccessResponse | IErrorResponse> {
-    try {
-      const userId = req.user.userId;
-      const data = await this.authService.getProfile(userId);
-      return {
-        success: true,
-        message: 'Token verified successfully',
-        data,
-        statusCode: 200,
-      };
-    } catch (error) {
-      return handleErrorResponse(error);
-    }
+    const userId = req.user.userId;
+    const data = await this.authService.getProfile(userId);
+    return {
+      success: true,
+      message: 'Token verified successfully',
+      data,
+      statusCode: 200,
+    };
   }
 }
