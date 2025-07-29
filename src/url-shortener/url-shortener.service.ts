@@ -9,10 +9,14 @@ import { Model } from 'mongoose';
 import { Url } from './schemas/url.schema';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { calculateExpiryFromDuration } from './utils/duration.util';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UrlShortenerService {
-  constructor(@InjectModel(Url.name) private urlModel: Model<Url>) {}
+  constructor(
+    @InjectModel(Url.name) private urlModel: Model<Url>,
+    private readonly configService: ConfigService,
+  ) {}
 
   async createShortUrl(dto: CreateUrlDto, req: Request & any) {
     const { nanoid } = await import('nanoid');
@@ -41,7 +45,7 @@ export class UrlShortenerService {
       userId: req.user.userId,
     });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const baseUrl = this.configService.get('BASE_URL');
 
     return {
       originalUrl: newUrl.originalUrl,
@@ -65,7 +69,7 @@ export class UrlShortenerService {
       throw new ForbiddenException('You are not authorized to access this URL');
     }
 
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const baseUrl = this.configService.get('BASE_URL');
 
     return {
       originalUrl: url.originalUrl,
