@@ -21,8 +21,6 @@ export class RedirectService {
     }
 
     if (url.maxClicks !== Infinity && url.clicks >= url.maxClicks) {
-      url.active = false;
-      await url.save();
       throw new GoneException('Click limit reached');
     }
 

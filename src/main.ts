@@ -19,6 +19,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.use(cookieParser());
+
   console.log(`http://localhost:${process.env.PORT ?? 3000}`);
   await app.listen(process.env.PORT ?? 3000);
 }
