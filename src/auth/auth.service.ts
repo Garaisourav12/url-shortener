@@ -47,7 +47,9 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    const user = await this.userModel.findById(userId).select('-password');
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password -__v -createdAt -updatedAt');
     return user;
   }
 }
