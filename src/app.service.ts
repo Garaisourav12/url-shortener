@@ -6,7 +6,8 @@ export class AppService {
   getEntry(): ISuccessResponse {
     return {
       success: true,
-      message: 'Service is running',
+      message: 'Welcome to the URL Shortener API!',
+      data: null,
       statusCode: 200,
     };
   }
@@ -14,7 +15,11 @@ export class AppService {
   getHealth(): ISuccessResponse {
     return {
       success: true,
-      message: 'Service is healthy',
+      message: 'Application is healthy',
+      data: {
+        uptime: `${process.uptime().toFixed(2)}s`,
+        timestamp: new Date().toISOString(),
+      },
       statusCode: 200,
     };
   }

@@ -16,6 +16,13 @@ import { ISuccessResponse } from 'src/common/types';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CookieOptions } from 'express';
 import { ConfigService } from '@nestjs/config';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +36,23 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiBody({ type: RegisterDtoTs })
+  @ApiCreatedResponse({
+    description: 'User registered successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'User registered successfully',
+        data: {
+          _id: '64fe89cc0a532bfd746ae3e0',
+          email: 'john@example.com',
+          username: 'john_doe',
+        },
+        statusCode: 201,
+      },
+    },
+  })
   async register(@Body() dto: RegisterDtoTs): Promise<ISuccessResponse> {
     const data = await this.authService.register(dto);
     return {
@@ -41,6 +65,21 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
+  @ApiOperation({ summary: 'Login and get accessToken in cookie' })
+  @ApiBody({ type: LoginDtoTs })
+  @ApiOkResponse({
+    description: 'User logged in successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'User logged in successfully',
+        data: {
+          accessToken: 'JWT_TOKEN_HERE',
+        },
+        statusCode: 200,
+      },
+    },
+  })
   async login(
     @Res({ passthrough: true })
     res: Response & {
@@ -68,6 +107,18 @@ export class AuthController {
 
   @Get('logout')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout and clear cookie' })
+  @ApiOkResponse({
+    description: 'User logged out successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'User logged out successfully',
+        data: null,
+        statusCode: 200,
+      },
+    },
+  })
   async logout(
     @Res({ passthrough: true }) res: Response & any,
   ): Promise<ISuccessResponse> {
@@ -90,6 +141,23 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('verifyToken')
   @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Verify JWT token and fetch user profile' })
+  @ApiOkResponse({
+    description: 'Token verified and user fetched',
+    schema: {
+      example: {
+        success: true,
+        message: 'Token verified successfully',
+        data: {
+          _id: '64fe89cc0a532bfd746ae3e0',
+          email: 'john@example.com',
+          username: 'john_doe',
+        },
+        statusCode: 200,
+      },
+    },
+  })
   async verifyToken(
     @Req() req: Request & { user: { userId: string } },
   ): Promise<ISuccessResponse> {

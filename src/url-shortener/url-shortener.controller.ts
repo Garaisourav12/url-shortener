@@ -11,12 +11,18 @@ import {
 } from '@nestjs/common';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { UrlShortenerService } from './url-shortener.service';
-import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiBody,
+  ApiOkResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { ISuccessResponse } from 'src/common/types';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-@ApiTags('URL Shortener')
 @Controller('api')
 export class UrlShortenerController {
   constructor(private readonly urlService: UrlShortenerService) {}
@@ -24,12 +30,22 @@ export class UrlShortenerController {
   @Post('shorten')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Shorten a new URL' })
+  @ApiBody({ type: CreateUrlDto })
   @ApiCreatedResponse({
     description: 'URL shortened successfully',
     schema: {
       example: {
-        originalUrl: 'https://www.example.com/a-very-long-url-to-shorten',
-        shortUrl: 'http://localhost:3000/r/your-unique-code',
+        success: true,
+        message: 'URL shortened successfully',
+        data: {
+          originalUrl: 'https://www.example.com/very-long-url',
+          shortUrl: 'http://localhost:3000/r/custom-alias',
+          maxClicks: 10,
+          expireAt: '2025-08-15T00:00:00.000Z',
+        },
+        statusCode: 201,
       },
     },
   })
@@ -49,13 +65,29 @@ export class UrlShortenerController {
   @Get('stat/:shortCode')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiCreatedResponse({
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get statistics of a shortened URL' })
+  @ApiParam({
+    name: 'shortCode',
+    description: 'Short code or custom alias of the URL',
+    example: 'short-code / custom-alias',
+  })
+  @ApiOkResponse({
     description: 'URL analytics fetched successfully',
     schema: {
       example: {
-        originalUrl: 'https://www.example.com/a-very-long-url-to-shorten',
-        shortUrl: 'http://localhost:3000/r/your-unique-code',
-        clicks: 15,
+        success: true,
+        message: 'URL analytics fetched successfully',
+        data: {
+          originalUrl: 'https://www.example.com/very-long-url',
+          shortCode: 'custom-alias',
+          shortUrl: 'http://localhost:3000/r/custom-alias',
+          clicks: 5,
+          maxClicks: 10,
+          expireAt: '2025-08-15T00:00:00.000Z',
+          active: true,
+        },
+        statusCode: 200,
       },
     },
   })
