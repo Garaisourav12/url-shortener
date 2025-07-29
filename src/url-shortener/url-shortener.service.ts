@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { Url } from './schemas/url.schema';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { calculateExpiryFromDuration } from './utils/duration.util';
-import e from 'express';
 
 @Injectable()
 export class UrlShortenerService {
@@ -47,7 +46,10 @@ export class UrlShortenerService {
     return {
       originalUrl: newUrl.originalUrl,
       shortUrl: `${baseUrl}/r/${newUrl.shortCode}`,
-      maxClicks: newUrl.maxClicks,
+      maxClicks:
+        newUrl.maxClicks === Infinity || newUrl.maxClicks === null
+          ? 'Infinity'
+          : newUrl.maxClicks,
       expireAt: newUrl.expireAt,
     };
   }
@@ -70,7 +72,10 @@ export class UrlShortenerService {
       shortCode: url.shortCode,
       shortUrl: `${baseUrl}/r/${url.shortCode}`,
       clicks: url.clicks,
-      maxClicks: url.maxClicks,
+      maxClicks:
+        url.maxClicks === Infinity || url.maxClicks === null
+          ? 'Infinity'
+          : url.maxClicks,
       expireAt: url.expireAt,
       active: url.active,
     };

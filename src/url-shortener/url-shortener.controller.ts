@@ -46,7 +46,7 @@ export class UrlShortenerController {
     };
   }
 
-  @Get('stats/:shortCode')
+  @Get('stat/:shortCode')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiCreatedResponse({
@@ -64,6 +64,7 @@ export class UrlShortenerController {
     @Req() req: Request & any,
   ): Promise<ISuccessResponse> {
     const data = await this.urlService.getStats(shortCode, req);
+    console.log(data);
     return {
       success: true,
       message: 'URL analytics fetched successfully',
