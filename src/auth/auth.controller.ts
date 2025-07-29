@@ -12,13 +12,20 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterDtoTs } from './dto/register.dto.ts';
 import { LoginDtoTs } from './dto/login.dto.ts';
-import { IErrorResponse, ISuccessResponse } from 'src/common/types';
+import { ISuccessResponse } from 'src/common/types';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CookieOptions } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  configService: ConfigService;
+  constructor(
+    private readonly authService: AuthService,
+    configService: ConfigService,
+  ) {
+    this.configService = configService;
+  }
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
@@ -43,10 +50,11 @@ export class AuthController {
   ): Promise<ISuccessResponse> {
     const data = await this.authService.login(dto);
 
+    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
     res.cookie('accessToken', data.accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
+      secure: nodeEnv !== 'development',
+      sameSite: nodeEnv === 'development' ? 'none' : 'strict',
       maxAge: 1000 * 60 * 60 * 24,
     });
 
@@ -54,6 +62,27 @@ export class AuthController {
       success: true,
       message: 'User logged in successfully',
       data,
+      statusCode: HttpStatus.OK,
+    };
+  }
+
+  @Get('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(
+    @Res({ passthrough: true }) res: Response & any,
+  ): Promise<ISuccessResponse> {
+    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
+
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: nodeEnv !== 'development',
+      sameSite: nodeEnv === 'development' ? 'none' : 'strict',
+    });
+
+    return {
+      success: true,
+      message: 'User logged out successfully',
+      data: null,
       statusCode: HttpStatus.OK,
     };
   }
