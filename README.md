@@ -6,7 +6,7 @@ A secure, scalable URL shortener API built using **NestJS**, supporting user aut
 
 ## 📄 Live Documentation
 
-- **Swagger UI:** [https://your-backend-domain.com/api-docs](https://your-backend-domain.com/api-docs)
+- **Swagger UI:** [https://url-shortener-xbos.onrender.com/api-docs](https://url-shortener-xbos.onrender.com/api-docs)
 
 ---
 
@@ -37,9 +37,9 @@ A secure, scalable URL shortener API built using **NestJS**, supporting user aut
 ### 1. Clone & Setup
 
 ```bash
-git clone https://github.com/your-username/url-shortener-api.git
-cd url-shortener-api
-cp .env.example .env
+git clone https://github.com/Garaisourav12/url-shortener.git
+cd url-shortener
+cp .env
 ```
 
 Fill in your Mongo URI, JWT secret, and environment variables.
@@ -50,12 +50,6 @@ Using **Yarn**:
 
 ```bash
 yarn install
-```
-
-Or with **NPM**:
-
-```bash
-npm install
 ```
 
 ### 3. Run the app
@@ -73,37 +67,8 @@ yarn build
 yarn start:prod
 ```
 
-#### With NPM:
-
-```bash
-# Development
-npm run start:dev
-
-# Build
-npm run build
-
-# Production
-npm run start:prod
-```
-
 - API base: `http://localhost:3000`
 - Swagger docs: `http://localhost:3000/api-docs`
-
----
-
-## 🐳 Run with Docker
-
-### 1. Build Docker Image
-
-```bash
-docker build -t nest-url-shortener .
-```
-
-### 2. Run Container
-
-```bash
-docker run -d -p 3000:3000 --env-file .env nest-url-shortener
-```
 
 ---
 
@@ -161,7 +126,6 @@ docker run -d -p 3000:3000 --env-file .env nest-url-shortener
 - ✅ Custom short codes
 - ✅ Expiration & max click limit
 - ✅ Full Swagger integration
-- ✅ Docker support
 - ✅ Logout & token verification API
 - ✅ Token support in cookies and headers
 
@@ -170,10 +134,15 @@ docker run -d -p 3000:3000 --env-file .env nest-url-shortener
 ## 👤 Author
 
 **Sourav Garai**
-🔗 [GitHub](https://github.com/Garaisourav12) | ✉️ [youremail@example.com](mailto:youremail@example.com)
+🔗 [GitHub](https://github.com/Garaisourav12) | ✉️ [garaisourav12@gmail.com](mailto:garaisourav12@gmail.com)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is **not open-source** and is **unlicensed**.
+
+All rights are reserved © 2025 by **Sourav Garai**.  
+You may not use, copy, modify, or distribute this software without prior written permission from the author.
+
+For inquiries, please contact [**Sourav Garai**](https://www.linkedin.com/in/sourav-garai-9a4891199)
